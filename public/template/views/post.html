@@ -1,10 +1,11 @@
 <div class="container">
-  <a class="btn btn-primary btn-large pull-right" ng-href="/app/posts/new" ng-show="loggedIn"><i class="icon-edit"></i>&nbsp;New Post</a>
+  <a class="btn pull-right btn-large" ng-href="/"><i class="icon-home"></i>&nbsp;Home</a>
   <div class="span8 offset1">
-    <article ng-repeat="post in posts">
+    <article>
       <header>
-        <h1 style="font-size: 5em;line-height: 70px;">
+        <h1>
           <a ng-href="/app/posts/{{post.id}}">{{post.title}}</a>
+          <a class="btn" style="margin-left: 20px;" ng-show="loggedIn" ng-href="/app/posts/{{post.id}}/edit"><i class="icon-pencil"></i>&nbsp;Edit</a>
         </h1>
         <small>Posted on {{post.posted | date}}</small>
       </header>

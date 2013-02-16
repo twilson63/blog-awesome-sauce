@@ -1,7 +1,9 @@
 var express = require('express');
 var app = express();
 var _ = require('underscore');
+var marked = require('marked');
 var posts = [];
+
 
 app.configure(function() {
   // specify view engine
@@ -66,8 +68,19 @@ app.get('/api/posts', function(req, res) {
 
 app.post('/api/posts', restrict(), function(req, res) {
   req.body.id = _.uniqueId();
+  req.body.html = marked(req.body.body);
+  req.body.posted = new Date();
   posts.push(req.body);
   res.send(201, req.body);
+});
+
+app.get('/api/posts/:id', restrict(), function(req, res) {
+  var post = _(posts).findWhere({id: req.params.id});
+  if (post) {
+    res.send(post);
+  } else {
+    res.send(404, new Error('Not Found!'));
+  }
 });
 
 app.get('/api/posts/:id/edit', restrict(), function(req, res) {
@@ -82,6 +95,7 @@ app.get('/api/posts/:id/edit', restrict(), function(req, res) {
 app.put('/api/posts/:id', restrict(), function(req, res) {
   var post = _(posts).findWhere({id: req.params.id});
   if (post) {
+    req.body.html = marked(req.body.body);
     _.extend(post, req.body);
     res.send(post);
   } else {

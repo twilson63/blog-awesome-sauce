@@ -5,6 +5,7 @@ angular.module('app', ['ui.bootstrap','http-auth-interceptor'])
       .when('/', { controller: 'MainCtrl', templateUrl: '/template/views/main.html'})
       .when('/app/posts/new', { controller: 'PostNewCtrl', templateUrl: '/template/views/post-form.html'})
       .when('/app/posts/:id/edit', { controller: 'PostEditCtrl', templateUrl: '/template/views/post-form.html'})
+      .when('/app/posts/:id', { controller: 'PostCtrl', templateUrl: '/template/views/post.html'})
       ;
     // turn on html5 Push State
     location.html5Mode(true);
@@ -81,6 +82,13 @@ angular.module('app', ['ui.bootstrap','http-auth-interceptor'])
       .success(function(posts) {
         $scope.posts = posts;
       })
+  }])
+  .controller('PostCtrl', ['$scope', '$http', '$routeParams', 
+    function($scope, $http, $routeParams) {
+      $http.get('/api/posts/' + $routeParams.id)
+        .success(function(post) {
+          $scope.post = post;
+        })    
   }])
   .controller('PostNewCtrl',['$scope', '$http', '$location', 
     function($scope, $http, $location){
