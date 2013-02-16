@@ -1,0 +1,10 @@
+<div class="container">
+  <a class="btn btn-primary btn-large pull-right" ng-href="/app/posts/new" ng-show="loggedIn"><i class="icon-edit"></i>&nbsp;New Post</a>
+  <article ng-repeat="post in posts">
+    <header>
+      <a class="btn pull-right" ng-show="loggedIn" ng-href="/app/posts/{{post.id}}/edit">Edit</a>
+      <h1>{{post.title}}</h1>
+    </header>
+    {{post.body}}
+  </article>
+</div>
