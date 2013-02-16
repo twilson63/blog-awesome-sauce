@@ -6,7 +6,7 @@
         <h1 style="font-size: 5em;line-height: 70px;">
           <a ng-href="/app/posts/{{post.id}}">{{post.title}}</a>
         </h1>
-        <small>Posted on {{post.posted | date}}</small>
+        <small class="pull-right">Posted on {{post.posted | date}}</small>
       </header>
       <div ng-bind-html-unsafe="post.html"></div>
       <footer>

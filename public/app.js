@@ -80,6 +80,7 @@ angular.module('app', ['ui.bootstrap','http-auth-interceptor'])
   .controller('MainCtrl',['$scope', '$http', function($scope, $http){
     $http.get('/api/posts')
       .success(function(posts) {
+        console.log(posts);
         $scope.posts = posts;
       })
   }])
