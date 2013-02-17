@@ -13,7 +13,6 @@ app.configure(function() {
 
   // load middleware
   app.use(express.favicon());
-
   app.use(express.bodyParser());
   app.use(express.cookieParser('what a lovely day for a walk'));
   app.use(express.session());
@@ -29,9 +28,10 @@ app.configure(function() {
   });
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
+  app.use(express.compress());
 });
 
-// middleware
+// middleware for restricting api methods
 function restrict() {
   return function (req, res, next) {
     if (req.session.user === 1) {
@@ -42,10 +42,12 @@ function restrict() {
   }
 }
 
+// Initialize App
 app.get('/', function(req, res) {
   res.render('index');
 })
 
+// Create User Session
 app.post('/api/sessions', function(req, res) {
   // authenticate
   req.session.regenerate(function() {
@@ -61,11 +63,13 @@ app.post('/api/sessions', function(req, res) {
   });
 });
 
+// Get New Post
 app.get('/api/posts/new', restrict(), function(req, res) {
   // get all posts
   res.send(200, 'OK');
 });
 
+// List Posts
 app.get('/api/posts', function(req, res) {
   client.keys("posts:*", function(err, results) {
     var posts = [];
@@ -92,6 +96,7 @@ app.get('/api/posts', function(req, res) {
   });
 });
 
+// Create Post
 app.post('/api/posts', restrict(), function(req, res) {
   client.incr("counters:posts", function(err, uniqueId) {
     req.body.id = uniqueId;
@@ -104,6 +109,7 @@ app.post('/api/posts', restrict(), function(req, res) {
   });
 });
 
+// View Post
 app.get('/api/posts/:id', function(req, res) {
   client.get("posts:" + req.params.id, function(err, post) {
     if (err) { return res.send(404, new Error('Not Found!')); }
@@ -111,6 +117,7 @@ app.get('/api/posts/:id', function(req, res) {
   });
 });
 
+// Edit Post
 app.get('/api/posts/:id/edit', restrict(), function(req, res) {
   client.get("posts:" + req.params.id, function(err, post) {
     if (err) { return res.send(404, new Error('Not Found!')); }
@@ -118,6 +125,7 @@ app.get('/api/posts/:id/edit', restrict(), function(req, res) {
   });
 });
 
+// Update Post
 app.put('/api/posts/:id', restrict(), function(req, res) {
   client.get("posts:" + req.params.id, function(err, data) {
     if (err) { return res.send(404, new Error('Not Found!')); }
@@ -130,6 +138,7 @@ app.put('/api/posts/:id', restrict(), function(req, res) {
   });
 });
 
+// Delete Post
 app.del('/api/posts/:id', restrict(), function(req, res) {
   client.del("posts:" + req.params.id, function(err, post) {
     if (err) { return res.send(404, new Error('Not Found!')); }
@@ -137,11 +146,13 @@ app.del('/api/posts/:id', restrict(), function(req, res) {
   });
 });
 
+// Log Out
 app.post('/api/logout', restrict(), function(req, res) {
   delete req.session.user
   res.send(200, { status: 'ok'});
 });
 
+// Api Call to Validate Session
 app.get('/api/ping', function(req, res) {
   if (req.session.user) {
     res.send(200, { status: 'ok'});
@@ -151,8 +162,10 @@ app.get('/api/ping', function(req, res) {
   
 })
 
+// HTML5 PushState
 app.get('/app/*', function(req, res) {
   res.render('index');
 });
 
+// listen on server
 app.listen(8000);
