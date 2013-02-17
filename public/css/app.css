@@ -1,0 +1,12 @@
+.CodeMirror-scroll {
+  height: auto; 
+  overflow: visible;
+}
+
+body {
+  margin-top: 60px;
+}
+
+article p {
+  font-size: 22px;
+}

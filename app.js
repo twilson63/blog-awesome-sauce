@@ -31,6 +31,7 @@ app.configure(function() {
   app.use(express.static(__dirname + '/public'));
 });
 
+// middleware
 function restrict() {
   return function (req, res, next) {
     if (req.session.user === 1) {
@@ -48,12 +49,15 @@ app.get('/', function(req, res) {
 app.post('/api/sessions', function(req, res) {
   // authenticate
   req.session.regenerate(function() {
-    if (req.body.username === 'admin' && req.body.password === 'admin') {
-      req.session.user = 1;
-      res.send(200, {status: 'ok'});
-    } else {
-      res.send(500, {status: 'access denied '});
-    }
+    client.get('blog:account', function(err, data) {
+      var account = JSON.parse(data);
+      if (req.body.username === account.username && req.body.password === account.password) {
+        req.session.user = 1;
+        res.send(200, {status: 'ok'});
+      } else {
+        res.send(500, {status: 'access denied '});
+      }
+    })
   });
 });
 
@@ -72,8 +76,16 @@ app.get('/api/posts', function(req, res) {
       client.get(key, function(err, value) {
         posts.push(JSON.parse(value));
         if (total === 0) {
-          setTimeout(function() { res.send(posts); }, 100);
+          setTimeout(function() { 
+            try {
+              res.json(posts); 
+            } catch(err) {
+              // swallow error
+              //console.log(err);
+            }
+          }, 200);
           //process.nextTick(function() { res.send(posts); });
+          //res.send(posts);
         }
       })
     })

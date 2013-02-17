@@ -1,4 +1,4 @@
-angular.module('app', ['ui.bootstrap','http-auth-interceptor'])
+angular.module('app', ['ui','ui.bootstrap','http-auth-interceptor'])
   .config(['$routeProvider', '$locationProvider', function(route, location) {
     // handle routes
     route
@@ -36,6 +36,10 @@ angular.module('app', ['ui.bootstrap','http-auth-interceptor'])
       // add alert msg
       scope.addAlert = function(alert) {
         scope.alerts.push(alert);
+        setTimeout(function() {
+          scope.$apply(function(){ scope.closeAlert(0);
+          })
+        }, 2000);
       };
 
       // remove alert msg
@@ -80,19 +84,19 @@ angular.module('app', ['ui.bootstrap','http-auth-interceptor'])
   .controller('MainCtrl',['$scope', '$http', function($scope, $http){
     $http.get('/api/posts')
       .success(function(posts) {
-        console.log(posts);
         $scope.posts = posts;
       })
   }])
   .controller('PostCtrl', ['$scope', '$http', '$routeParams', 
     function($scope, $http, $routeParams) {
-      $http.get('/api/posts/' + $routeParams.id)
+      var id = $routeParams.id  .split('-')[0];
+      $http.get('/api/posts/' + id)
         .success(function(post) {
           $scope.post = post;
         })    
   }])
   .controller('PostNewCtrl',['$scope', '$http', '$location', 
-    function($scope, $http, $location){
+    function($scope, $http, $location) {
       $http.get('/api/posts/new');
       $scope.save = function(post) {
         $http.post('/api/posts', post)
