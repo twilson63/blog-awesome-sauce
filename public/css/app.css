@@ -3,8 +3,10 @@
   overflow: visible;
 }
 */
-body {
-  margin-top: 60px;
+@media (min-width: 1000px) { 
+  body {
+    margin-top: 60px;
+  }
 }
 
 article p {
