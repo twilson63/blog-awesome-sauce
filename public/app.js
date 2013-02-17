@@ -47,8 +47,8 @@ angular.module('app', ['ui','ui.bootstrap','http-auth-interceptor'])
         scope.alerts.splice(index, 1);
       };
   }])
-  .controller('LoginCtrl',['$scope', '$location', '$http', 'authService', '$rootScope',
-    function($scope, $location, $http, authService, $rootScope) {
+  .controller('LoginCtrl',['$scope', '$location', '$http', 'authService', '$rootScope', '$window',
+    function($scope, $location, $http, authService, $rootScope, $window) {
       $scope.user = {};
       // handle listen to login required event
       $scope.$on('event:auth-loginRequired', function() {
@@ -63,6 +63,7 @@ angular.module('app', ['ui','ui.bootstrap','http-auth-interceptor'])
       });
       // login to server
       $scope.login = function(user) {
+        user._csrf = $window.csrf;
         $http.post('/api/sessions', user)
           .success(function(data) {
             // show alert login success
@@ -95,10 +96,11 @@ angular.module('app', ['ui','ui.bootstrap','http-auth-interceptor'])
           $scope.post = post;
         })    
   }])
-  .controller('PostNewCtrl',['$scope', '$http', '$location', 
-    function($scope, $http, $location) {
+  .controller('PostNewCtrl',['$scope', '$http', '$location', '$window',
+    function($scope, $http, $location, $window) {
       $http.get('/api/posts/new');
       $scope.save = function(post) {
+        post._csrf = $window.csrf;
         $http.post('/api/posts', post)
           .success(function (data) {
             $scope.addAlert({type: 'success', msg: 'Article has been posted successfully!'})
@@ -109,13 +111,14 @@ angular.module('app', ['ui','ui.bootstrap','http-auth-interceptor'])
           })
       }
   }])
-  .controller('PostEditCtrl', ['$scope', '$http', '$location', '$routeParams',
-    function($scope, $http, $location, $routeParams) {
+  .controller('PostEditCtrl', ['$scope', '$http', '$location', '$routeParams', '$window',
+    function($scope, $http, $location, $routeParams, $window) {
       $http.get('/api/posts/' + $routeParams.id + '/edit')
         .success(function(data) {
           $scope.post = data;
         })
       $scope.save = function(post) {
+        post._csrf = $window.csrf;
         $http.put('/api/posts/' + $routeParams.id, post)
           .success(function(data) {
             $scope.addAlert({type: 'success', msg: 'Article has been updated successfully!'})
@@ -126,7 +129,7 @@ angular.module('app', ['ui','ui.bootstrap','http-auth-interceptor'])
           })
       }
       $scope.destroy = function(id) {
-        $http.delete('/api/posts/' + id)
+        $http.delete('/api/posts/' + id + "?_csrf=" + escape($window.csrf) )
           .success(function(data) {
             $scope.addAlert({type: 'success', msg: 'Article has been deleted successfully!'})
             $location.path('/');

@@ -1,10 +1,10 @@
 <div class="container">
   <a class="btn pull-right btn-large" ng-href="/"><i class="icon-home"></i>&nbsp;Home</a>
   <h1>Add/Edit Post</h1>
-  <form>
+  <form name="postForm">
     <p>
       <label>Title</label>
-      <input class="span11" type="text" ng-model="post.title" required></input>
+      <input class="span11" type="text" autofocus ng-model="post.title" required></input>
     </p>
     <p>
       <label>Body (Markdown Supported)</label>
@@ -15,7 +15,7 @@
     <p class="span11">
       <a class="btn btn-warning btn-large pull-right"  style="margin-right: 20px;" ng-href="/app/posts/{{post.id}}-{{post.title | inflector:'underscore' }}" ng-show="post.id"><i class="icon-remove-sign"></i>&nbsp;Cancel</a>
       <button class="btn btn-danger btn-large pull-right" ng-show="post.id" style="margin-right: 20px;" ng-click="destroy(post.id)"><i class="icon-trash"></i>&nbsp;Delete</button>
-      <button class="btn btn-primary btn-large pull-right"  style="margin-right: 20px;" ng-click="save(post)"><i class="icon-cog"></i>&nbsp;Submit</button>
+      <button class="btn btn-primary btn-large pull-right"  style="margin-right: 20px;" ng-disabled="postForm.$invalid" ng-click="save(post)"><i class="icon-cog"></i>&nbsp;Submit</button>
     </p>
   </form>
 </div>

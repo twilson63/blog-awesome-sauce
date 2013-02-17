@@ -10,12 +10,12 @@ app.configure(function() {
   // specify view engine
   app.set('view engine', 'ejs');
   app.set('views', __dirname + '/views');
-
   // load middleware
   app.use(express.favicon());
-  app.use(express.bodyParser());
   app.use(express.cookieParser('what a lovely day for a walk'));
   app.use(express.session());
+  app.use(express.bodyParser());
+  app.use(express.csrf());
   app.use(function(req, res, next){
     var err = req.session.error
       , msg = req.session.success;
@@ -44,7 +44,7 @@ function restrict() {
 
 // Initialize App
 app.get('/', function(req, res) {
-  res.render('index');
+  res.render('index', { token: req.session._csrf});
 })
 
 // Create User Session
@@ -164,7 +164,7 @@ app.get('/api/ping', function(req, res) {
 
 // HTML5 PushState
 app.get('/app/*', function(req, res) {
-  res.render('index');
+  res.render('index', { token: req.session._csrf});
 });
 
 // listen on server
