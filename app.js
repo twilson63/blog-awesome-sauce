@@ -27,7 +27,8 @@ app.configure(function() {
     next();
   });
   app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
+  var oneYear = 31557600000;
+  app.use(express.static(__dirname + '/public', { maxAge: oneYear }));
   app.use(express.compress());
 });
 
