@@ -15,7 +15,8 @@ app.configure(function() {
   app.use(express.cookieParser('what a lovely day for a walk'));
   app.use(express.session());
   app.use(express.bodyParser());
-  app.use(express.csrf());
+  // Bug csrf not working right
+  //app.use(express.csrf());
   app.use(function(req, res, next){
     var err = req.session.error
       , msg = req.session.success;
