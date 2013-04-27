@@ -35,7 +35,7 @@ app.configure(function() {
 // middleware for restricting api methods
 function restrict() {
   return function (req, res, next) {
-    if (req.session.user === 1) {
+    if (req.session.user) {
       next();
     } else {
       res.send(401, 'Login Required');
@@ -55,7 +55,7 @@ app.post('/api/sessions', function(req, res) {
     client.get('blog:account', function(err, data) {
       var account = JSON.parse(data);
       if (req.body.username === account.username && req.body.password === account.password) {
-        req.session.user = 1;
+        req.session.user = req.body.username;
         res.send(200, {status: 'ok'});
       } else {
         res.send(500, {status: 'access denied '});
@@ -67,7 +67,7 @@ app.post('/api/sessions', function(req, res) {
 // Get New Post
 app.get('/api/posts/new', restrict(), function(req, res) {
   // get all posts
-  res.send(200, 'OK');
+  res.send(200, { username: req.session.user });
 });
 
 // List Posts
